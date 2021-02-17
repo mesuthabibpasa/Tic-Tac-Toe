@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+</head>
+
+<script>
+
+    //set dimension and you will see a sqr board of dim*dim
+    var dim = 4;
+
+
+    //game parameters
+    let turn = 0;
+    let moves = [];
+    let signs = ['x', 'o'];
+    let mode = '2 Players';
+    let scores = {
+        x: 0,
+        o: 0,
+    }
+
+    for (var i = 0; i <= dim + 2; i++) {
+        moves[i] = new Array(dim + 2).fill(0);
+    }
+
+    function createBoard() {
+        for (let row = 1; row <= dim; row++) {
+            var gameRow = document.createElement("DIV");
+            gameRow.className = 'row';
+            gameRow.id = `row-${row}`;
+            document.getElementById("game-board").appendChild(gameRow);
+            for (let col = 1; col <= dim; col++) {
+                var cell = document.createElement("DIV");
+                cell.className = 'cell';
+                cell.classList.add('border');
+                cell.classList.add('border-dark');
+                buttonId = `${row}${col}`
+                cell.innerHTML = `<button id="${buttonId}" type="button" onclick="game(${row},${col})"></button>`
+                document.getElementById(`row-${row}`).appendChild(cell);
+            }
+        };
+        reset();
+    };
+
+    function toggleMode() {
+        if (mode == '2 Players') {
+            document.getElementById('mode').innerHTML = 'Against Comp.';
+            mode = 'Against Comp.';
+        } else {
+            document.getElementById('mode').innerHTML = '2 Players';
+            mode = '2 Players';
+        }
+        reset();
+    }
+
+    function game(x, y) {  
+        document.getElementById(`${x}${y}`).innerHTML = signs[turn % 2];
+        moves[x][y] = signs[turn % 2];
+        checkGameOver(x, y);
+        turn += 1;
+        if (mode === 'Against Comp.') {
+            if(turn === dim*dim){
+                document.getElementById('result').innerHTML = `Game over. Reset the game!`;
+                return;
+            }
+            do {
+                var compX = Math.ceil(Math.random() * dim);
+                console.log(compX);
+                var compY = Math.ceil(Math.random() * dim);
+                console.log(compY);
+            } while (moves[compX][compY] != 0 && turn < dim * dim);
+            document.getElementById(`${compX}${compY}`).innerHTML = signs[turn % 2];
+            moves[compX][compY] = signs[turn % 2];
+            turn += 1;
+            console.log(moves);
+            console.log('turn');
+            console.log(turn);
+            checkGameOver(compX, compY);
+            return;
+        }
+        console.log(moves);
+    };
+
+
+    function checkGameOver(x, y) {
+        if (turn < 5) {
+            return;
+        } else if (turn >= dim * dim) {
+            document.getElementById('result').innerHTML = `Game over. Reset the game!`;
+            return;
+        }
+        let curSign = moves[x][y];
+
+        const checkCoords = {
+            '-1-1': [[1, 1], [-2, -2]],
+            '-10': [[-2, 0], [1, 0]],
+            '-11': [[1, -1], [-2, 2]],
+            '0-1': [[0, -2]],
+            '01': [[0, 2]],
+            '1-1': [[2, -2]],
+            '10': [[2, 0]],
+            '11': [[2, 2]],
+        }
+        for (let r = -1; r < 2; r++) {
+            for (let c = -1; c < 2; c++) {
+                if (moves[x + r] != undefined && moves[x + r][y + c] != undefined) {
+                    if (r === 0 && c === 0) {
+                        continue;
+                    } else if (moves[x + r][y + c] === curSign) {
+                        console.log(`${r}${c}`)
+                        for (let z = 0; z < checkCoords[`${r}${c}`].length; z++) {
+                            const addToRow = checkCoords[`${r}${c}`][z][0];
+                            const addToCol = checkCoords[`${r}${c}`][z][1];
+                            if (moves[x + addToRow][y + addToCol] === curSign) {
+                                console.log(`${curSign} wins`)
+                                scores[curSign] += 1;
+                                document.getElementById('Xresult').innerHTML = `X: ${scores.x}`;
+                                document.getElementById('Oresult').innerHTML = `O: ${scores.o}`;
+                            }
+                        }
+                    }
+                };
+            }
+        };
+
+
+    }
+
+    function reset() {
+        moves = [];
+        turn = 0;
+        for (i = 1; i <= dim * dim; i++) {
+            document.getElementsByTagName('BUTTON')[i].innerHTML = '';
+        };
+        for (var i = 0; i <= dim + 2; i++) {
+            moves[i] = new Array(dim + 2).fill(0);
+        }
+
+        scores = {
+            x: 0,
+            o: 0,
+        }
+        document.getElementById('Xresult').innerHTML = `X: ${scores.x}`;
+        document.getElementById('Oresult').innerHTML = `O: ${scores.o}`;
+        document.getElementById('result').innerHTML = ``;
+    };
+</script>
+
+
+<body onload="createBoard()">
+    <div class="container bg-light">
+        <header>
+            <div class="row">
+                <h3>Tic Tac Toe</h3>
+            </div>
+        </header>
+        <div class="row mt-3">
+            <button id="mode" class="btn btn-secondary btn-sm w-auto mb-3" type="button" onclick="toggleMode()">2
+                Players</button>
+        </div>
+        <div class="row game-board" id="game-board">
+
+        </div>
+        <div class="row mt-3">
+            <h3 id="result"></h3>
+            <h3 id="Xresult"></h3>
+            <h3 id="Oresult"></h3>
+            <button id="reset" class="btn btn-secondary btn-lg w-auto" type="button" onclick="reset()">Reset</button>
+        </div>
+    </div>
+</body>
+
+<style>
+    .row {
+        justify-content: center;
+        text-align: center;
+    }
+
+    .cell {
+        width: 100px;
+        height: 100px;
+        background: #eaeaea;
+    }
+
+    button {
+        width: 100%;
+        height: 100%;
+        background-color: transparent;
+        border: none;
+    }
+</style>
+
+</html>
