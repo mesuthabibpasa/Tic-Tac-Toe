@@ -13,7 +13,7 @@
 <script>
 
     //set dimension and you will see a sqr board of dim*dim
-    var dim = 4;
+    var dim = 3;
 
 
     //game parameters
@@ -26,7 +26,7 @@
         o: 0,
     }
 
-    for (var i = 0; i <= dim + 2; i++) {
+    for (var i = 0; i < dim + 2; i++) {
         moves[i] = new Array(dim + 2).fill(0);
     }
 
@@ -63,8 +63,8 @@
     function game(x, y) {  
         document.getElementById(`${x}${y}`).innerHTML = signs[turn % 2];
         moves[x][y] = signs[turn % 2];
-        checkGameOver(x, y);
         turn += 1;
+        checkGameOver(x, y);
         if (mode === 'Against Comp.') {
             if(turn === dim*dim){
                 document.getElementById('result').innerHTML = `Game over. Reset the game!`;
@@ -86,18 +86,19 @@
             return;
         }
         console.log(moves);
+        console.log(turn);
     };
 
 
     function checkGameOver(x, y) {
         if (turn < 5) {
             return;
-        } else if (turn >= dim * dim) {
+        } else if (turn === dim * dim) {
             document.getElementById('result').innerHTML = `Game over. Reset the game!`;
             return;
         }
         let curSign = moves[x][y];
-
+        console.log('check if any triple');
         const checkCoords = {
             '-1-1': [[1, 1], [-2, -2]],
             '-10': [[-2, 0], [1, 0]],
@@ -119,7 +120,7 @@
                             const addToRow = checkCoords[`${r}${c}`][z][0];
                             const addToCol = checkCoords[`${r}${c}`][z][1];
                             if (moves[x + addToRow][y + addToCol] === curSign) {
-                                console.log(`${curSign} wins`)
+                                console.log(`${curSign} makes a point`)
                                 scores[curSign] += 1;
                                 document.getElementById('Xresult').innerHTML = `X: ${scores.x}`;
                                 document.getElementById('Oresult').innerHTML = `O: ${scores.o}`;
@@ -139,7 +140,7 @@
         for (i = 1; i <= dim * dim; i++) {
             document.getElementsByTagName('BUTTON')[i].innerHTML = '';
         };
-        for (var i = 0; i <= dim + 2; i++) {
+        for (var i = 0; i < dim + 2; i++) {
             moves[i] = new Array(dim + 2).fill(0);
         }
 
