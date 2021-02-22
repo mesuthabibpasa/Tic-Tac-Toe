@@ -13,8 +13,7 @@
 <script>
 
     //set dimension and you will see a sqr board of dim*dim
-    var dim = 3;
-
+    var dim = 6;
 
     //game parameters
     let turn = 0;
@@ -60,13 +59,13 @@
         reset();
     }
 
-    function game(x, y) {  
+    function game(x, y) {
         document.getElementById(`${x}${y}`).innerHTML = signs[turn % 2];
         moves[x][y] = signs[turn % 2];
         turn += 1;
         checkGameOver(x, y);
         if (mode === 'Against Comp.') {
-            if(turn === dim*dim){
+            if (turn === dim * dim) {
                 document.getElementById('result').innerHTML = `Game over. Reset the game!`;
                 return;
             }
@@ -85,11 +84,8 @@
             checkGameOver(compX, compY);
             return;
         }
-        console.log(moves);
         console.log(turn);
     };
-
-
     function checkGameOver(x, y) {
         if (turn < 5) {
             return;
@@ -98,12 +94,11 @@
             return;
         }
         let curSign = moves[x][y];
-        console.log('check if any triple');
         const checkCoords = {
             '-1-1': [[1, 1], [-2, -2]],
             '-10': [[-2, 0], [1, 0]],
             '-11': [[1, -1], [-2, 2]],
-            '0-1': [[0, -2]],
+            '0-1': [[0, -2], [0, 1]],
             '01': [[0, 2]],
             '1-1': [[2, -2]],
             '10': [[2, 0]],
